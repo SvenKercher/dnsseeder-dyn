@@ -26,9 +26,9 @@ class CNode {
 
   int GetTimeout() {
       if (you.IsTor())
-          return 120;
+          return 60;
       else
-          return 30;
+          return 10;
   }
 
   void BeginMessage(const char *pszCommand) {
@@ -136,9 +136,7 @@ class CNode {
       // printf("%s: got %i addresses\n", ToString(you).c_str(), (int)vAddrNew.size());
       int64 now = time(NULL);
       vector<CAddress>::iterator it = vAddrNew.begin();
-      if (vAddrNew.size() > 1) {
-        if (doneAfter == 0 || doneAfter > now + 1) doneAfter = now + 1;
-      }
+      if (doneAfter == 0 || doneAfter > now + 1) doneAfter = now + 1;
       while (it != vAddrNew.end()) {
         CAddress &addr = *it;
 //        printf("%s: got address %s\n", ToString(you).c_str(), addr.ToString().c_str(), (int)(vAddr->size()));
@@ -288,7 +286,7 @@ bool TestNode(const CService &cip, int &ban, int &clientV, std::string &clientSV
     clientV = node.GetClientVersion();
     clientSV = node.GetClientSubVersion();
     blocks = node.GetStartingHeight();
-//  printf("%s: %s!!!\n", cip.ToString().c_str(), ret ? "GOOD" : "BAD");
+  //printf("%s: %s!!!\n", cip.ToString().c_str(), ret ? "GOOD" : "BAD");
     return ret;
   } catch(std::ios_base::failure& e) {
     ban = 0;
@@ -306,4 +304,5 @@ int main(void) {
   printf("ret=%s ban=%i vAddr.size()=%i\n", ret ? "good" : "bad", ban, (int)vAddr.size());
 }
 */
+
 

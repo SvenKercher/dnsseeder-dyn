@@ -12,7 +12,7 @@
 
 #define MIN_RETRY 1000
 
-#define REQUIRE_VERSION 2030500
+#define REQUIRE_VERSION 70800
 
 static inline int GetRequireHeight(const bool testnet = fTestNet)
 {
@@ -119,6 +119,7 @@ public:
   }
   int GetBanTime() const {
     if (IsGood()) return 0;
+	//Below clientVersion < check should be the previous version. Set to current version for 70003 only to prevent forking.
     if (clientVersion && clientVersion < 2000000) { return 604800; }
     if (stat1M.reliability - stat1M.weight + 1.0 < 0.15 && stat1M.count > 32) { return 30*86400; }
     if (stat1W.reliability - stat1W.weight + 1.0 < 0.10 && stat1W.count > 16) { return 7*86400; }
@@ -219,7 +220,7 @@ protected:
   void Bad_(const CService &ip, int ban);  // mark an IP as bad (and optionally ban it) (must have been returned by Get_)
   void Skipped_(const CService &ip);       // mark an IP as skipped (must have been returned by Get_)
   int Lookup_(const CService &ip);         // look up id of an IP
-  void GetIPs_(std::set<CNetAddr>& ips, uint64_t requestedFlags, int max, const bool *nets); // get a random set of IPs (shared lock only)
+  void GetIPs_(std::set<CNetAddr>& ips, int max, const bool *nets); // get a random set of IPs (shared lock only)
 
 public:
   std::map<CService, time_t> banned; // nodes that are banned, with their unban time (a)
@@ -351,8 +352,8 @@ public:
       }
     }
   }
-  void GetIPs(std::set<CNetAddr>& ips, uint64_t requestedFlags, int max, const bool *nets) {
+  void GetIPs(std::set<CNetAddr>& ips, int max, const bool *nets) {
     SHARED_CRITICAL_BLOCK(cs)
-      GetIPs_(ips, requestedFlags, max, nets);
+      GetIPs_(ips, max, nets);
   }
 };
